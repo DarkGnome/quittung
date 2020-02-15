@@ -1,5 +1,3 @@
-const Hjson = require('hjson')
-
 /** Provides some simple logging with a prompt and indentions. */
 module.exports = function (_prompt, _promptLength, _indentLength) {
   var log = function (string) {
@@ -31,14 +29,6 @@ module.exports = function (_prompt, _promptLength, _indentLength) {
     console.debug('DEBUG | ' + prompt + indention + string)
   }
 
-  function stringify (obj) {
-    debug(JSON.stringify(obj))
-  }
-
-  function hstringify (obj) {
-    debug(Hjson.stringify(obj))
-  }
-
   function info (string) {
     console.info('INFO  | ' + prompt + indention + string)
   }
@@ -58,8 +48,6 @@ module.exports = function (_prompt, _promptLength, _indentLength) {
   /* functions to regulate logging level */
   function setAll (fun) {
     log.debug = fun
-    log.stringify = fun
-    log.hstringify = fun
     log.log = fun
     log.info = fun
     log.warn = fun
@@ -74,8 +62,6 @@ module.exports = function (_prompt, _promptLength, _indentLength) {
     switch (level) {
       case 'debug':
         log.debug = debug
-        log.stringify = stringify
-        log.hstringify = hstringify
         log.log = debug
         /* FALLTHROUGH */
       default:
