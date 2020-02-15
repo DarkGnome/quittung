@@ -35,7 +35,7 @@ function createQuittung (req, res) {
   const inWords = numberToWords(amount)
 
   // get current date
-  const date = new Date().toISOString().slice(0, 10)
+  const date = getCurrentDate()
 
   // TODO create pdf
   // TODO sent pdf to download
@@ -130,6 +130,12 @@ function numberToWords (number) {
   return '--- ' + string + ' ---'
 }
 
+function getCurrentDate() {
+  const day = new Date().toISOString().slice(8, 10)
+  const month = new Date().toISOString().slice(5, 7)
+  const year = new Date().toISOString().slice(0, 4)
+  return day + '.' + month + '.' + year
+}
 module.exports = function (config, db) {
   var router = express.Router()
   Quittung = db.models.Quittung
