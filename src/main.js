@@ -20,7 +20,6 @@ async function start () {
   var initRouter = require('./router.js')
   var runServer = require('./server.js')
 
-  log.info('hello')
   const config = loadConfig('./config')
   await initGlobal(config)
   setMode(config.mode)

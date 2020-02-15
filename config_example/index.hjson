@@ -1,12 +1,14 @@
 {
   // Available options for mode: production, development
   mode: development
-  // Set logging level. available options: debug, info, warn, error, fatal
+  // Set logging level. Available options: debug, info, warn, error, fatal
   logging: info
 
   server: {
     // The port the server should be bound to.
     port: 1776
+    // Which address to bind the server to. Available options: localhost, ip
+    bind_method: ip
   }
 
   db: {
