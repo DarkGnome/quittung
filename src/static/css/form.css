@@ -1,0 +1,45 @@
+body {
+  padding: 50px;
+  font: 14px "Helvetica Neue","Open Sans",sans-serif;
+}
+
+h1, h2 {
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 35px;
+}
+
+p {
+  font-size: 16px;
+}
+input[type=text] {
+  margin-left: 10px;
+}
+
+label {
+  margin-left: 25px;
+}
+
+form {
+  width: 500px;
+}
+
+input[type=submit] {
+  margin: auto;
+  float: right;
+}
+
+.constant {
+  background: none;
+  border: none;
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  padding: none;
+  size: 15;
+  width: fill;
+  user-select: parent;
+}
+

@@ -1,0 +1,41 @@
+body {
+  padding: 50px;
+  font: 14px "Helvetica Neue","Open Sans",sans-serif;
+}
+
+h1, h2, h3 {
+  font-weight: 400;
+  margin: 10px;
+}
+
+h1 {
+  font-size: 35px;
+}
+
+p {
+  font-size: 16px;
+}
+
+input[type=submit] {
+  margin: auto;
+}
+
+td {
+  padding-left: 10px;
+  padding-right: 10px;
+  /* padding-top: 0px; */
+  /* padding-bottom: 0px; */
+  border: 1px solid black;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.no-right-border {
+  border-right-width: 0px;
+}
+
+.no-left-border {
+  border-left-width: 0px;
+}

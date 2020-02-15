@@ -1,0 +1,54 @@
+extends header/generic_header
+
+append scripts
+  script(src='/js/html2canvas.min.js')
+  script(src='/js/jquery-3.4.1.min.js')
+  script(src='/js/jspdf-1.5.3.min.js')
+  script(src='/js/print_quittung.js')
+
+append css
+  link(rel='stylesheet', href='/css/quittung.css')
+
+mixin row(description, value)
+  tr
+    td(align="right")
+      h2=description
+    td(align="left", colspan="4")
+        h2=value
+
+block content
+  table(width="850px", border="0", align="center")
+    tr
+      td.no-right-border(align="left", colspan="4")
+        h1 Quittung
+      td.no-left-border(align="left")
+        h2 Nr. #{quittung_number}
+    tr
+      td(align="right", width="170px")
+        h2 Gesamtbetrag
+      td(align="right", width="140px")
+        h2 #{amount} €
+      td(align="left", width="225px")
+        h2 inkl. #{taxes}% MwSt.
+      td(align="right", width="160px")
+        h2 Nettobetrag
+      td(align="right", width="140px")
+        h2 #{net} €
+    +row("in Worten", amount_in_words)
+    +row("von", who_from)
+    +row("an", who_to)
+    +row("für", reason)
+    tr
+      td(align="right")
+        h2 Ort
+      td(align="left")
+        h2 Karlsruhe
+      td(rowspan="2", colspan="3")
+        h3 Diese Quittung wurde maschinell erstellt
+        h3 und ist ohne Unterschrift gültig.
+    tr
+      td(align="right")
+        h2 Datum
+      td(align="left")
+        h2=date
+
