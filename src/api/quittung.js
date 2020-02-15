@@ -8,12 +8,14 @@ var Quittung
 function createQuittung (req, res) {
   const r = req.body
 
-  log.stringify(r)
+  log(JSON.stringify(r))
 
   // check input for correctness
-  if (!checkRequest(r)) {
-    log('Not fulfilling request with incorrect provided values.')
-    log.stringify(r)
+  try {
+    checkRequest(r)
+  } catch (err) {
+    log.warn('Received incorrect request. Error was ' + err)
+    log(JSON.stringify(r))
     // TODO send to error page
     res.redirect('back')
     return
@@ -80,29 +82,39 @@ function checkRequest (r) {
   const needed = ['who_to', 'who_from', 'reason', 'reason_var_text', 'amount']
 
   const hasAllFields = needed.map(p => r[p] !== undefined).reduce((x, y) => x && y)
+  if (!hasAllFields) {
+    throw new Error('Not all required fields were provided')
+  }
 
   // check who values
   const isCombination1 = r.who_to === 'to_us' && r.who_from === 'from_them'
   const isCombination2 = r.who_to === 'to_them' && r.who_from === 'from_us'
   const whoIsOK = isCombination1 || isCombination2
+  if (!whoIsOK) {
+    throw new Error('Invalid combination of give/receive')
+  }
 
   // check reason
   const reason = r.reason
-  const isValidReason = global.taxes[reason] !== undefined
+  const isValidReason = lookupTaxes(reason) !== undefined
   // TODO make frontend not pass arrays anymore, then enable these
   // const isDefault = reason === 'default_geben' || reason === 'default_nehmen'
   // const hasReasonConstText = r.reason_const_text !== undefined
   // const eitherDefaultOrConstText = isDefault !== hasReasonConstText
   const eitherDefaultOrConstText = true
   const reasonIsOK = isValidReason && eitherDefaultOrConstText
+  if (!reasonIsOK) {
+    throw new Error('Provided reason is incorrect.')
+  }
 
   // check amount
   const amount = parseFloat(r.amount)
   const amountInOKRange = !isNaN(amount) && amount >= 2 && amount <= 250
+  if (!amountInOKRange) {
+    throw new Error('Given amount is not valid.')
+  }
 
   // TODO check nothing is an array
-
-  return hasAllFields && whoIsOK && reasonIsOK && amountInOKRange
 }
 
 function getReasonText (reason, constText, varText) {
