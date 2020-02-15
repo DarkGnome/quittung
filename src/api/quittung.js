@@ -8,12 +8,12 @@ var Quittung
 function createQuittung (req, res) {
   const r = req.body
 
-  console.log(JSON.stringify(r))
+  log.stringify(r)
 
   // check input for correctness
   if (!checkRequest(r)) {
     log('Not fulfilling request with incorrect provided values.')
-    log(JSON.stringify(r))
+    log.stringify(r)
     // TODO send to error page
     res.redirect('back')
     return

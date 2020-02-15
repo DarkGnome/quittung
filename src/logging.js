@@ -1,5 +1,3 @@
-const Hjson = require('hjson')
-
 /** Provides some simple logging with a prompt and indentions. */
 module.exports = function (_prompt, _promptLength, _indentLength) {
   var log = function (string) {
@@ -32,7 +30,7 @@ module.exports = function (_prompt, _promptLength, _indentLength) {
   }
 
   function stringify (obj) {
-    debug(Hjson.stringify(obj))
+    debug(JSON.stringify(obj))
   }
   function info (string) {
     console.info('INFO  | ' + prompt + indention + string)
