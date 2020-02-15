@@ -29,8 +29,10 @@ function createQuittung (req, res) {
   const reason = getReasonText(r.reason, r.reason_const_text, r.reason_var_text)
 
   // numbers
-  const amount = parseFloat(r.amount).toFixed(2)  const taxes = lookupTaxes(r.reason)
+  const amount = parseFloat(r.amount).toFixed(2)
+  const taxes = lookupTaxes(r.reason)
   const net = (amount / (1.0 + taxes * 0.01)).toFixed(2)
+  const inWords = numberToWords(amount)
 
   // get current date
   const date = new Date().toISOString().slice(0, 10)
@@ -47,8 +49,6 @@ function createQuittung (req, res) {
       ' when: ' + date)
 
   // TODO start print pdf and print job
-
-  const inWords = '--- ' + n2words(r.amount, { lang: 'de' }) + ' ---'
 
   // TODO create quittung number
   const quittungNumber = '1337'
@@ -117,6 +117,17 @@ function getReasonText (reason, constText, varText) {
 function lookupTaxes (reason) {
   const taxes = global.taxes[reason]
   return taxes
+}
+
+function numberToWords (number) {
+  const parts = String(number).split('.')
+  const integerPart = parts[0]
+  const floatPart = parts[1]
+  let string = n2words(integerPart, { lang: 'de' }) + ' Euro'
+  if (floatPart !== 0) {
+    string = string + ' und ' + n2words(floatPart, { lang: 'de' }) + ' Cent'
+  }
+  return '--- ' + string + ' ---'
 }
 
 module.exports = function (config, db) {
