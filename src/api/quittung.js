@@ -21,9 +21,9 @@ function createQuittung (req, res) {
 
   // who
   const whoTo = r.who_to === 'to_us'
-    ? r.who_to_const_text : r.who_to_var_text
+    ? r.who_to_const_text[0] : r.who_to_var_text
   const whoFrom = r.who_from === 'from_us'
-    ? r.who_from_const_text : r.who_from_var_text
+    ? r.who_from_const_text[0] : r.who_from_var_text
 
   // reason
   const reason = getReasonText(r.reason, r.reason_const_text, r.reason_var_text)
@@ -53,7 +53,6 @@ function createQuittung (req, res) {
   // TODO create quittung number
   const quittungNumber = '1337'
 
-  // TODO create database entry
   Quittung.create({
     who_to: whoTo,
     who_from: whoFrom,
@@ -64,17 +63,17 @@ function createQuittung (req, res) {
     taxes: taxes,
     when: date
   })
-    .then(res.render('print_quittung', {
-      quittung_number: quittungNumber,
-      amount: amount,
-      taxes: taxes,
-      net: net,
-      amount_in_words: inWords,
-      who_from: whoFrom,
-      who_to: whoTo,
-      reason: reason,
-      date: date
-    }))
+  .then(res.render('print_quittung', {
+    quittung_number: quittungNumber,
+    amount: amount,
+    taxes: taxes,
+    net: net,
+    amount_in_words: inWords,
+    who_from: whoFrom,
+    who_to: whoTo,
+    reason: reason,
+    date: date
+  }))
 }
 
 function checkRequest (r) {
@@ -109,7 +108,7 @@ function checkRequest (r) {
 function getReasonText (reason, constText, varText) {
   const orderedReasons = [
     'miete', 'kaution', 'ersatz', 'verkauf', 'default_nehmen', 'beleg',
-    'fahrtkosten', 'gage', 'Gage für', 'default_geben']
+    'fahrtkosten', 'gage', 'default_geben']
   const reasonPosition = orderedReasons.indexOf(reason)
   return constText[reasonPosition] + ' ' + varText[reasonPosition]
 }

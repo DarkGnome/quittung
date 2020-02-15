@@ -26,6 +26,8 @@ mixin radio_label(name, value, label, fixed, checked)
               value=label, size=15, tabindex='-1')
       else
         - var size=36
+        input(type='hidden', name=name + '_const_text', class='constant',
+              value=label, size=0, tabindex='-1')
       input(type='text', name=name + '_var_text', maxlength='150', size=size)
   br
 block content
