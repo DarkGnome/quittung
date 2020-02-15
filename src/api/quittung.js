@@ -29,8 +29,7 @@ function createQuittung (req, res) {
   const reason = getReasonText(r.reason, r.reason_const_text, r.reason_var_text)
 
   // numbers
-  const amount = parseFloat(r.amount).toFixed(2)
-  const taxes = lookupTaxes(r.reason)
+  const amount = parseFloat(r.amount).toFixed(2)  const taxes = lookupTaxes(r.reason)
   const net = (amount / (1.0 + taxes * 0.01)).toFixed(2)
 
   // get current date
@@ -85,7 +84,7 @@ function checkRequest (r) {
 
   // check who values
   const isCombination1 = r.who_to === 'to_us' && r.who_from === 'from_them'
-  const isCombination2 = r.who_to === 'to_thom' && r.who_from === 'from_us'
+  const isCombination2 = r.who_to === 'to_them' && r.who_from === 'from_us'
   const whoIsOK = isCombination1 || isCombination2
 
   // check reason
