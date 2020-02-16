@@ -1,10 +1,13 @@
 {
 # Steuerprozentsätze
-  default_geben: 0
-  default_nehmen: 19
-  ersatz: 7
-  gage: 0
-  kaution: 19
   miete: 7
+  kaution: 19
+  ersatz: 7
   verkauf: 19
+  default_nehmen: 19
+  # TODO treat beleg specially
+  beleg: 0
+  fahrtkosten: 0
+  gage: 0
+  default_geben: 0
 }
