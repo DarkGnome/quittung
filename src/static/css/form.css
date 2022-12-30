@@ -1,6 +1,9 @@
 body {
   padding: 50px;
   font: 14px "Helvetica Neue","Open Sans",sans-serif;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
 }
 
 h1, h2 {
