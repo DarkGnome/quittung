@@ -1,4 +1,4 @@
-var express = require('express')
+import express from 'express'
 
 function getQuittungForm (req, res) {
   res.render('add_quittung', {
@@ -6,7 +6,7 @@ function getQuittungForm (req, res) {
   })
 }
 
-module.exports = function (config, db) {
+export default function routePageQuittung (config, db) {
   var router = express.Router()
 
   router.get('/', getQuittungForm)

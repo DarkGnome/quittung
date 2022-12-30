@@ -1,9 +1,12 @@
-const http = require('http')
-const ip   = require('ip');
-const log = require('./logging.js')('server', 6)
+import http from 'http'
+import ip from 'ip'
+
+import setupLogging from './logging.js'
+
+const log = setupLogging('server', 6)
 
 /** Starts the server and binds it to the port. */
-function run (conf, router) {
+export default function runServer (conf, router) {
   // Create HTTP server.
   var port = conf.port
   router.set('port', port)
@@ -45,5 +48,3 @@ function run (conf, router) {
     }
   })
 }
-
-module.exports = run

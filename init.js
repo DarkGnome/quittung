@@ -1,4 +1,5 @@
-// wrap everything to execute in strict mode
-require('strict-mode')(function () {
-  require('./src/main')()
-})
+"use strict";
+
+import start from './src/main.js'
+
+start()

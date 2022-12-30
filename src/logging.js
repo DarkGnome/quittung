@@ -1,5 +1,5 @@
 /** Provides some simple logging with a prompt and indentions. */
-module.exports = function (_prompt, _promptLength, _indentLength) {
+export default function setupLogging(_prompt, _promptLength, _indentLength) {
   var log = function (string) {
     log.debug(string)
   }

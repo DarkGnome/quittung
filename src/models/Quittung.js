@@ -1,4 +1,4 @@
-module.exports = function (sequelize, DataTypes) {
+export default function quittungModel (sequelize, DataTypes) {
   /**
    * A quittung (receipt).
    */

@@ -1,4 +1,11 @@
-const log = require('./logging.js')('main', 6)
+import loadConfig from './config.js'
+import initDB from './db.js'
+import initGlobal from './global.js'
+import setupLogging from './logging.js'
+import initRouter from './router.js'
+import runServer from './server.js'
+
+const log = setupLogging('main', 6)
 
 /*
  * Starting function. Startup order is:
@@ -13,24 +20,29 @@ const log = require('./logging.js')('main', 6)
  * E-server
  *   bind to localhost and start
  */
-async function start () {
-  var loadConfig = require('./config.js')
-  var initDB = require('./db.js')
-  var initGlobal = require('./global.js')
-  var initRouter = require('./router.js')
-  var runServer = require('./server.js')
-
+export default async function start () {
   const config = loadConfig('./config')
-  await initGlobal(config)
-  setMode(config.mode)
-  const db = await initDB(config)
-  const router = await initRouter(config, db)
-  try {
-    runServer(config.server, router)
-  } catch (err) {
-    log.fatal('Server crashed. Error was: ', err)
-    process.exit(1)
-  };
+  var router
+  initGlobal(config)
+    .then(() => {
+      setMode(config.mode)
+      return initDB(config)
+    })
+    .then(db => {
+      return initRouter(config, db)
+    })
+    .then(r => {
+      router = r
+      try {
+        runServer(config.server, router)
+      } catch (err) {
+        log.fatal('Server crashed. Error was: ' + err)
+        process.exit(1)
+      };
+    })
+    .catch((err) => {
+      log.error("Error: " + err)
+    })
 }
 
 function setMode (mode) {
@@ -42,5 +54,3 @@ function setMode (mode) {
   }
   process.env.NODE_ENV = mode
 }
-
-module.exports = start

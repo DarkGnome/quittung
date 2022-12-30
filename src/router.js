@@ -1,50 +1,14 @@
-const bodyParser = require('body-parser')
-const express = require('express')
-const favicon = require('express-favicon')
-const fs = require('fs')
-const log = require('./logging.js')('router', 6)
-const path = require('path')
+import bodyParser from 'body-parser';
+import express from 'express';
+import favicon from 'express-favicon';
+import path from 'node:path';
 
-/** Routes all definitions made in the given @param file to the given @param route. */
-function routeFile (file, route, router, config, db) {
-  log('routing ' + file + ' to ' + route)
-  const subRouter = require('' + file)(config, db)
-  router.use(route, subRouter)
-}
+import routeApiCreateQuittung from './api/quittung.js'
+import routePageQuittung from './pages/index.js'
 
-/**
- * Initialize all routes including subfolders. Bind according to name of file.
- * For example:
- * index.js will be mapped to /
- * contacts/index.js will be mapped to /contacts
- * contacts/groups.js will be mapped to /contacts/groups
- * @param currentFolder the folder currently in
- */
-function routeRecursive (folder, routePath, router, config, db) {
-  log.indent()
-  fs.readdirSync(folder)
-    .forEach(function (file) {
-      var currentFile = path.join(folder, file)
+import setupLogging from './logging.js'
 
-      if (fs.lstatSync(currentFile).isDirectory()) {
-        log('entering ' + file)
-        routeRecursive(currentFile, routePath + file + '/', router, config, db)
-      } else if (file.endsWith('.js')) {
-        var route
-
-        if (file.toLowerCase() === 'index.js') {
-          // cut off the '/' of the path, unless it's the whole path
-          route = routePath.substring(0, routePath.lastIndexOf('/'))
-          if (route === '') { route = '/' }
-        } else {
-          // cut off the '.js' and append to routePath
-          route = routePath + file.substring(0, file.lastIndexOf('.js'))
-        }
-        routeFile(currentFile, route, router, config, db)
-      } // else ignore
-    })
-  log.undent()
-}
+const log = setupLogging('router', 6)
 
 function create404 (req, res, next) {
   var err = new Error('Not Found.')
@@ -62,15 +26,13 @@ function errorHandler (err, req, res, next) {
 }
 
 /** Sets up routing. */
-function init (config, db) {
+export default function initRouter (config, db) {
   const router = express()
 
   try {
     // folders
-    const apiFolder = path.join(__dirname, 'api')
-    const pagesFolder = path.join(__dirname, 'pages')
-    const staticFolder = path.join(__dirname, 'static')
-    const viewsFolder = path.join(__dirname, 'views')
+    const staticFolder = path.resolve('./src/static')
+    const viewsFolder = path.resolve('./src/views')
 
     // favicon
     log('setting favicon')
@@ -87,11 +49,14 @@ function init (config, db) {
 
     // route
     log('setting up /api')
-    routeRecursive(apiFolder, '/api/', router, config, db)
+    router.use("/api/quittung", routeApiCreateQuittung(config, db))
+
     log('setting up static content')
     router.use('/', express.static(staticFolder))
+
     log('setting up pages')
-    routeRecursive(pagesFolder, '/', router, config, db)
+    router.use("/", routePageQuittung(config, db))
+
     log('setting up default 404 fallback')
     router.use(create404)
     log('setting up error handler')
@@ -103,5 +68,3 @@ function init (config, db) {
 
   return router
 }
-
-module.exports = init

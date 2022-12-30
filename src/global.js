@@ -1,7 +1,9 @@
-const log = require('./logging.js')('global', 6)
+import setupLogging from './logging.js'
+
+const log = setupLogging('global', 6)
 
 /** Sets global variables. */
-async function init (config) {
+export default async function initGlobal (config) {
   // set logging level
   if (config.logging) {
     global.logging = config.logging
@@ -11,5 +13,3 @@ async function init (config) {
 
   log('initialized global variables')
 }
-
-module.exports = init

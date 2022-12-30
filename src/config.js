@@ -1,13 +1,15 @@
-require('hjson/lib/require-config')
+import Hjson from 'hjson'
+import * as fs from 'fs';
+import path from 'node:path'
 
-const fs = require('fs')
-const log = require('./logging.js')('config', 6)
-const path = require('path')
+import setupLogging from './logging.js'
+
+const log = setupLogging('config', 6)
 
 /** Reads config in given @param file. (readability wrapper) */
 function readConfig (file) {
-  var newConfig = require(file)
-  return newConfig
+  const config_text = fs.readFileSync(file, 'utf8');
+  return Hjson.parse(config_text);
 }
 
 /** Adds a config @param subConfig to a @param parentConfig by setting it as a property called @param name. */
@@ -46,13 +48,14 @@ function readConfigsRecursive (currentFolder) {
 
 /** Load main config file from @param configPath and set logging level. */
 function setLogging (configPath) {
-  const file = path.join(configPath, 'index')
-  const tmpConfig = require(file)
+  const file = path.join(configPath, 'index.hjson')
+  const config_text = fs.readFileSync(file, 'utf8')
+  const tmpConfig = Hjson.parse(config_text)
   log.setLevel(tmpConfig.logging)
 }
 
 /** Initiates loading of config files from  */
-function load (folder) {
+export default function loadConfig (folder) {
   var configPath = path.resolve(folder)
   setLogging(configPath)
   log('loading ' + configPath)
@@ -60,5 +63,3 @@ function load (folder) {
   log.info('loaded config')
   return config
 }
-
-module.exports = load

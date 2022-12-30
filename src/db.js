@@ -1,52 +1,30 @@
-const fs = require('fs')
-const log = require('./logging.js')('db', 6)
-const path = require('path')
-const Sequelize = require('sequelize')
+import * as fs from 'fs';
+import path from 'node:path';
+import Sequelize from 'sequelize'
+import { fileURLToPath } from 'node:url';
+
+import quittungModel from './models/Quittung.js'
+import setupLogging from './logging.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const log = setupLogging('db', 6)
 
 /** Connect to DB. Returns Promise. */
 async function connect (db) {
   try {
     log('connecting to db')
-    await db.authenticate()
+    return db.authenticate()
   } catch (err) {
-    log.error('Unable to connect to the database: ', err)
-    // TODO throw
+    return Promise.reject('Unable to connect to the database: ' + err)
   }
 }
 
 /** Load models. Asynchronous. */
 async function loadModels (db) {
-  try {
-    log('loading models')
-    const folder = path.join(__dirname, 'models')
-    let models = {}
-    models = await loadModelsRecursive(folder, db, models)
-    return models
-  } catch (err) {
-    log.error('An error occurred while loading the models:', err)
-    // TODO throw
+  return {
+    Quittung: quittungModel(db, Sequelize.DataTypes),
   }
-}
-
-/** Loads models recursively from given @param folder and adds them to the
-  * @param db. Also stores the model names in @param models structure. */
-async function loadModelsRecursive (folder, db, models) {
-  log.indent()
-  for (const file of fs.readdirSync(folder)) {
-    const currentFile = path.join(folder, file)
-
-    if (fs.lstatSync(currentFile).isDirectory()) {
-      log('entering ' + file)
-      models = loadModelsRecursive(currentFile, db, models)
-    } else if (file.endsWith('.js')) {
-      log('loading  ' + file)
-      var model = await db.import(currentFile)
-      models[model.name] = model
-    } // else ignore
-  }
-  log.undent()
-
-  return models
 }
 
 /** Creates associations for @param models. */
@@ -100,7 +78,7 @@ async function syncSchemes (sequelize) {
  * -[opt if creating a new db] db initialization with default values
  * -sync models
  */
-async function init (conf) {
+export default async function initDB (conf) {
   let uri
   try {
     uri = conf.db.uri
@@ -113,14 +91,21 @@ async function init (conf) {
     logging: conf.db.logging ? log : false
   })
 
-  await connect(db)
-  var models = await loadModels(db)
-  createAssociations(models)
-  await syncSchemes(db)
-  await createDefaultValues(models, conf)
+  var models
 
-  log.info('db ready')
-  return db
+  return connect(db)
+    .then(() => {
+      models = loadModels(db)
+
+      createAssociations(models)
+      return syncSchemes(db)
+    })
+    .then(() => {
+      createDefaultValues(models, conf);
+      log.info('db ready');
+      return db;
+    })
+    .catch(err => {
+      log.error(err)
+    })
 }
-
-module.exports = init

@@ -1,14 +1,16 @@
-const express = require('express')
-const log = require('../logging.js')('api/quittung')
-const n2words = require('n2words')
+import express from 'express'
+import * as fs from 'fs';
+import n2words from 'n2words'
+
+import setupLogging from '../logging.js'
+
+const log = setupLogging('db', 6)
 
 // globally available variables
 var Quittung
 
 function createQuittung (req, res) {
   const r = req.body
-
-  log(JSON.stringify(r))
 
   // check input for correctness
   try {
@@ -147,7 +149,8 @@ function getCurrentDate() {
   const year = new Date().toISOString().slice(0, 4)
   return day + '.' + month + '.' + year
 }
-module.exports = function (config, db) {
+
+export default function routeApiCreateQuittung (config, db) {
   var router = express.Router()
   Quittung = db.models.Quittung
 
