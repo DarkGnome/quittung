@@ -1,9 +1,12 @@
 import express from 'express'
 import * as fs from 'fs';
 import n2words from 'n2words'
+import hjson from 'hjson';
 
 import setupLogging from '../logging.js'
 
+const config = hjson.parse(fs.readFileSync('config/index.hjson', 'utf8'));
+const organizationCity = config.organization.city;
 const log = setupLogging('db', 6)
 
 // globally available variables
@@ -55,7 +58,7 @@ function createQuittung (req, res) {
   // TODO start print pdf and print job
 
   // TODO create quittung number
-  const quittungNumber = '1337'
+  //const quittungNumber = '1337'
 
   Quittung.create({
     who_to: whoTo,
@@ -67,7 +70,10 @@ function createQuittung (req, res) {
     taxes: taxes,
     when: date
   })
-  .then(res.render('print_quittung', {
+  .then((quittung) => {
+    // Use the ID from the created quittung entry
+    const quittungNumber = quittung.id;
+    res.render('print_quittung', {
     quittung_number: quittungNumber,
     amount: amount,
     taxes: taxes,
@@ -76,8 +82,9 @@ function createQuittung (req, res) {
     who_from: whoFrom,
     who_to: whoTo,
     reason: reason,
-    date: date
-  }))
+    date: date,
+    organizationCity: organizationCity
+  })})
 }
 
 function checkRequest (r) {

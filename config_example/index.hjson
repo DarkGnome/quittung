@@ -11,6 +11,11 @@
     bind_method: ip
   }
 
+  organization: {
+    name: "Arbeitskreis Kultur und Kommunikation"
+    city: "Karlsruhe"
+  }
+  
   db: {
     // The path of the database file.
     uri: sqlite:db.sqlite
