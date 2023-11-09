@@ -35,11 +35,11 @@ block content
   form(id='create_quittung', method='post', action='/api/quittung')
     div
       h2 Das Geld geht an…
-      +radio_label('who_to', 'to_us' ,'Arbeitskreis Kultur und Kommunikation', true, true)
+      +radio_label('who_to', 'to_us' ,organizationName, true, true)
       +radio_label('who_to', 'to_them')
     div
       h2 Das Geld kommt von…
-      +radio_label('who_from', 'from_us', 'Arbeitskreis Kultur und Kommunikation', true)
+      +radio_label('who_from', 'from_us', organizationName, true)
       +radio_label('who_from', 'from_them')
     h2 Das Geld ist für…
     div(id='to_us_section')
